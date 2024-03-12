@@ -9,17 +9,17 @@ Custo reduzido usando embeddings e bases vetoriais para reduzir o número de Tok
 Estrutura de chat aplicável em qualquer website
 
 # Membros da equipe
-Lorenzo Carneiro Magalhães - 2021031505 - Fullstack 
-Tomas Lacerda Muniz - 2021088116 - Fullstack
+.Lorenzo Carneiro Magalhães - 2021031505 - Fullstack  
+.Tomas Lacerda Muniz - 2021088116 - Fullstack  
 
 # Tecnologias 
 ## Python
-. Pdfminer
-. Openai API
+. Pdfminer  
+. Openai API  
 
 ## JavaScript
-. React Native (Frontend)
-. Node.js (Backend)
+. React Native (Frontend)  
+. Node.js (Backend)  
 
 ## PostgreSQL
 . Banco de dados RDS na AWS
