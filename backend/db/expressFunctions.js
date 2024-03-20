@@ -27,6 +27,7 @@ export const registerUser = async (req, res) => {
 export const getUserByUsername = async (req, res) => {
     try {
         const username = req.query.username; // Capture "username" from query params
+        console.log(username + ' db')
         if (!username) {
             return res.status(400).send('Username is required');
         }
@@ -41,3 +42,39 @@ export const getUserByUsername = async (req, res) => {
         res.status(500).send('Internal server error');
     }
 };
+
+
+export const authenticateUser = async (req, res) => {
+    try {
+        const username = req.query.username; // Capture "username" from query params
+        const password = req.query.password
+
+        console.log(`user ${username} and pass ${password} for db`)
+
+        if (!username) {
+            return res.status(400).send('Username is required');
+        }
+
+        if (!username) {
+            return res.status(400).send('Password is required');
+        }
+
+        const user = await getUserByUsername_(username);
+
+        if (!user){
+            res.status(404).send('User not found');
+        }
+
+        if (user.username == username && user.password == password){
+            return res.status(200)
+        }
+
+        else{
+            return res.status(400).send('Wrong password/user')
+        }
+
+    } catch (error) {
+        console.error('Error fetching user:', error);
+        res.status(500).send('Internal server error');
+    }
+}

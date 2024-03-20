@@ -6,7 +6,7 @@
   "main": "server.js",
   "scripts": {
     "test": "start",
-    "start": "node --env-file ../../.env server.js"
+    "start": "node --env-file .env server.js"
   },
   "author": "lorascombos",
   "license": "ISC"

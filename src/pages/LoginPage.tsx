@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -14,16 +14,19 @@ const LoginPage: React.FC = () => {
     // Envie a requisição ao back-end
     try {
       const response = await fetch('http://localhost:3001/api/users/login', {
-        method: 'POST',
+        method: 'PGE',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ username, password }),
       });
+
+      console.log(response)
 
       if (response.ok) {
         const data = await response.json();
         console.log('Login Success:', data);
+          navigate('/profile')
         // Aqui você pode salvar o token de autenticação, se estiver usando um
         // navigate('/home'); // Redirecionar para a página inicial ou dashboard
       } else {
@@ -52,8 +55,8 @@ const LoginPage: React.FC = () => {
         </div>
         <form onSubmit={handleSubmit} className="w-full max-w-xs">
           <div className="mb-4">
-            <label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2">Email</label>
-            <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)}
+            <label className="block text-gray-700 text-sm font-bold mb-2">Username</label>
+            <input type="text" id="email" value={username} onChange={(e) => setUsername(e.target.value)}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
           </div>
           <div className="mb-6">
