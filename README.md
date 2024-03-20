@@ -20,7 +20,7 @@ Será desenvolvida uma aplicação com interface gráfica web focada em dialogar
 - Openai API.
 - Pandas.
 
-### JavaScript
+### JavaScript/TypeScript
 - React Native, Tailwind e bibliotecas auxiliares (Frontend).
 - Node.js (Backend).
 - Python (Backend with OpenAI).
