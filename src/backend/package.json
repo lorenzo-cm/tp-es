@@ -1,0 +1,13 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "backend",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "test": "start",
+    "start": "node --env-file ../../.env server.js"
+  },
+  "author": "lorascombos",
+  "license": "ISC"
+}
