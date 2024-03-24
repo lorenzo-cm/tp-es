@@ -9,5 +9,8 @@
     "start": "node --env-file .env server.js"
   },
   "author": "lorascombos",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "cookie-parser": "^1.4.6"
+  }
 }

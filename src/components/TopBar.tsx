@@ -1,7 +1,7 @@
 // src/components/TopBar.tsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import logo from '../assets/logo.svg'; // Adjust the path according to your project structure
+import logo from '../../assets/logo.svg'; // Adjust the path according to your project structure
 
 const TopBar: React.FC = () => {
   const isLoggedIn = false; // Placeholder for authentication state

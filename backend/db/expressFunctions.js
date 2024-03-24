@@ -1,13 +1,14 @@
 import { createUser, getUserByUsername_ } from './baseFunctions.js';
 import { sendConfirmationEmail } from '../services/emailService.js';
-import { generateToken } from '../services/tokenService.js';
+import { v4 } from 'uuid';
+
 
 export const registerUser = async (req, res) => {
     try {
         const { username, email, password, name, role } = req.body;
 
         // Gerar um código de confirmação
-        const confirmationCode = generateToken();
+        const confirmationCode = v4();
 
         // Aqui, supõe-se que a função createUser agora também recebe o código de confirmação
         const newUser = await createUser(username, email, password, name, role, confirmationCode);
@@ -44,37 +45,35 @@ export const getUserByUsername = async (req, res) => {
 };
 
 
-export const authenticateUser = async (req, res) => {
+export const authenticateUser = async (req, res, next) => {
     try {
-        const username = req.query.username; // Capture "username" from query params
-        const password = req.query.password
+        const { username, password } = req.body;
 
-        console.log(`user ${username} and pass ${password} for db`)
+        console.log(`${username}, ${password}`)
 
         if (!username) {
             return res.status(400).send('Username is required');
         }
 
-        if (!username) {
+        if (!password) { // Fixed to check for password existence
             return res.status(400).send('Password is required');
         }
 
         const user = await getUserByUsername_(username);
 
-        if (!user){
-            res.status(404).send('User not found');
+        if (!user) {
+            return res.status(404).send('User not found'); // Make sure to return here
         }
 
-        if (user.username == username && user.password == password){
-            return res.status(200)
-        }
-
-        else{
-            return res.status(400).send('Wrong password/user')
+        if (user.username == username && user.password == password) {
+            req.user = user;
+            next()
+        } else {
+            return res.status(400).send('Wrong password or user'); // Make sure to return here
         }
 
     } catch (error) {
         console.error('Error fetching user:', error);
-        res.status(500).send('Internal server error');
+        return res.status(500).send('Internal server error'); // Make sure to return here
     }
-}
+};

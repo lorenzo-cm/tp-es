@@ -1,43 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
-
 import { motion } from 'framer-motion';
+
+import { isLoggedIn } from '../utils/utils.ts'
+import performUserLogin from '../utils/performUserLogin.ts';
+
+// Atualizando a interface para incluir todos os campos
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  
+  const [errorMessage, setErrorMessage] = useState('');
+
+  useEffect(() => {
+    isLoggedIn().then((loggedIn) => {
+      if(loggedIn){
+        navigate('/profile')
+      }
+    })
+  }, [navigate]);
+
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    // Envie a requisição ao back-end
-    try {
-      const response = await fetch('http://localhost:3001/api/users/login', {
-        method: 'PGE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-      });
+    performUserLogin(username, password, navigate, setErrorMessage)
 
-      console.log(response)
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Login Success:', data);
-          navigate('/profile')
-        // Aqui você pode salvar o token de autenticação, se estiver usando um
-        // navigate('/home'); // Redirecionar para a página inicial ou dashboard
-      } else {
-        // Trate o caso de login inválido
-        console.error('Login Failed');
-        // Você pode definir uma mensagem de estado para mostrar ao usuário aqui
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      // Trate o erro de conexão ou outros erros
-    }
   };
 
   return (
@@ -72,6 +62,10 @@ const LoginPage: React.FC = () => {
             <button onClick={() => navigate('/register')} className="bg-blue-950 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
               Sign Up
             </button>
+          </div>
+
+          <div className="my-5 mx-6 flex items-center justify-center bg-red-200 rounded">
+            {errorMessage && <div className="text-red-700 ">{errorMessage}</div>}
           </div>
             
         </form>

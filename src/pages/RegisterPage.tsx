@@ -30,12 +30,11 @@ const RegisterPage: React.FC = () => {
       await axios.post('http://localhost:3000/api/users/register', formData);
       navigate('/success'); // Modifique conforme a rota de sucesso desejada
     } catch (error) {
-      // if (axios.isAxiosError(error) && error.response) {
-      //   // Você pode querer tratar diferentes status de erro aqui
-      //   setErrorMessage(error.response.data.message || 'Something went wrong. Please try again.');
-      // } else {
-      //   setErrorMessage('An unexpected error occurred. Please try again.');
-      // }
+      if (axios.isAxiosError(error) && error.response) {
+        setErrorMessage(error.response.data.message || 'Something went wrong. Please try again.');
+      } else {
+        setErrorMessage('An unexpected error occurred. Please try again.');
+      }
       console.log(error)
     }
   };
