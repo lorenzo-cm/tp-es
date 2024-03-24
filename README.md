@@ -27,3 +27,43 @@ Será desenvolvida uma aplicação com interface gráfica web focada em dialogar
 
 ### PostgreSQL
 - Banco de dados POSTGRESQL na AWS.
+  
+---
+
+# BACKLOG
+
+Como cliente, gostaria de me cadastrar no aplicativo
+
+Como cliente, gostaria de fornecer as informações do meu negócio para serem usadas como banco de dados
+
+Como cliente, gostaria de alterar as minhas informações pessoais e do meu negócio
+
+Como usuário final, gostaria de entrar por um site
+
+Como usuário final, gostaria de conversar com o chatbot especializado em certo negócio/empresa
+
+Como usuário final, gostaria de poder mandar imagens e audios
+
+
+# BACKLOG DO SPRINT
+	
+- Como cliente, gostaria de me cadastrar no aplicativo
+	- integrar backend com sistema de login [Lorenzo]
+	
+- Como cliente, gostaria de fornecer as informações do meu negócio para serem usadas como banco de dados
+	- Integrar informacoes do usuário, um arquivo pdf, com o backend [Tomas]
+	
+- Como cliente, gostaria de alterar as minhas informações pessoais e do meu negócio
+	- configuracao de perfil atraves do node js com interacao com o front [Lorenzo]
+
+- Como usuário final, gostaria de entrar por um site
+	- fazer front end usando react [Lorenzo]
+	- fazer backend para funcionamento do site usando node js usando express [Lorenzo]
+	- fazer todo backend com api da openAi [Tomas]
+	
+- Como usuário final, gostaria de conversar com o chatbot especializado em certo negócio/empresa
+	- para isso, deve-se integrar o front end do chat com uma db e com o backend do site [Lorenzo]
+	
+- Como usuário final, gostaria de poder mandar imagens e audios
+	- integracao front e back para integracao de fotos e audios na interface [Lorenzo]
+	- integracao com API da openAi [Tomas]
