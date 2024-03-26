@@ -1,9 +1,9 @@
-// src/pages/ProfilePage.tsx
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 
-import { isLoggedIn } from '../utils/utils.ts'
+import { isLoggedIn, getUser } from '../utils/utils.ts';
+import UserData from '../utils/userData.ts';
 
 const ProfilePage: React.FC = () => {
   const navigate = useNavigate();

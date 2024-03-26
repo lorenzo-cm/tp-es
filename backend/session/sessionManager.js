@@ -1,6 +1,8 @@
 import { v4 } from 'uuid';
 import pool from '../db/db.js';
 
+import { findSessionById, checkValidSession, deleteInvalidSessions } from '../db/sessionFunctions.js';
+
 
 export const createSession = async (req, res) => {
     const { user } = req;
@@ -15,7 +17,7 @@ export const createSession = async (req, res) => {
         );
 
         // Set the session token as an HTTP-only cookie
-        res.cookie('session', sessionToken, {
+        res.cookie('session_id', sessionToken, {
             httpOnly: true,
             secure: true,
             maxAge: 1000 * 60 * 60 * 24 * 30, // Cookie expires in 30 days
@@ -33,29 +35,21 @@ export const createSession = async (req, res) => {
 };
 
 
-
-export async function verifySession(req, res) {
-    // Read the session token from the cookies
-    const sessionToken = req.cookies.session;
-
-    if (!sessionToken) {
-        return res.status(401).send('Token not found');
-    }
+function baseAuth(req, res) {
 
     try {
-        const { rows } = await pool.query(
-            'SELECT * FROM tp_es.user_sessions WHERE session_token = $1 AND expires_at > NOW()',
-            [sessionToken]
-        );
+        const sessionToken = req.cookies.session_id;
 
-        if (rows.length === 0) {
-            // Correct the DELETE statement's WHERE clause
-            await pool.query(
-                'DELETE FROM tp_es.user_sessions WHERE session_token = $1 AND expires_at < NOW()',
-                [sessionToken]
-            );
+        if (!sessionToken) {
+            return res.status(401).send('Token not found');
+        }
+
+        const userId = checkValidSession(sessionToken)
         
-            // Correct the cookie name to match what was set ('session', not 'sessionToken')
+
+        if (!userId) {
+            deleteInvalidSessions(sessionToken)
+        
             res.clearCookie('session', {
                 httpOnly: true,
                 secure: true, // Note: Set to false if you're not using https in development
@@ -63,14 +57,60 @@ export async function verifySession(req, res) {
                 domain: 'localhost', // Set appropriately for production
             });
 
-            return res.status(401).json({ message: 'Token expired' });
+            return {status: 401, message: 'Token expired'}
         }
-
-        req.userId = rows[0].user_id; // Store the userId in the request object for later use
         
-        res.status(200).json({ message: 'Token validated' });
-    } catch (error) {
-        console.error('Error verifying session', error);
-        res.status(500).json({ message: 'Internal server error' });
+        return {data: {userId: userId} , status: 200, message: 'Token validated'}
+    } 
+    
+    catch (error) {
+        return {status: 500, message: 'Internal server error'}
     }
 }
+
+export async function authSession(req, res) {
+
+    const responseJson = baseAuth(req, res);
+
+    if (responseJson.hasOwnProperty("data")) {
+        req.data = responseJson.data
+    }
+
+    res.status(responseJson.status).json({ message: responseJson.message})
+}
+
+
+export const authSessionMiddleware = async (req, res, next) => {
+    const responseJson = baseAuth(req, res);
+
+    if (responseJson.hasOwnProperty("data")) {
+        req.data = responseJson.data
+    }
+
+    if (responseJson.status >= 400){
+        res.status(responseJson.status).json({ message: responseJson.message})
+    }
+
+    next()
+};
+
+
+export const authSessionMiddlewareRedirect = (req, res, next) => {
+
+    const responseJson = baseAuth(req, res);
+
+    if (responseJson.hasOwnProperty("data")) {
+        req.data = responseJson.data
+    }
+
+    if (responseJson.status <= 400){
+        console.log('redirecting user');
+        return res.redirect('/profile');
+    }
+
+    if (responseJson.status >= 400){
+        res.status(responseJson.status).json({ message: responseJson.message})
+    }
+
+    next()
+};

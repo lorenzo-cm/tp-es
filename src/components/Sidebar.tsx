@@ -1,13 +1,11 @@
 // src/components/Sidebar.tsx
 import React from 'react';
-import UserInfo from './UserInfo';
 import FooterSidebar from './FooterSidebar';
 
 const Sidebar: React.FC = () => {
   return (
     <aside className="w-64" aria-label="Sidebar">
       <div className="overflow-y-auto py-4 px-3 bg-gray-50 rounded dark:bg-gray-800 h-full">
-        <UserInfo />
         <ul className="space-y-2">
           <li>
             <button onClick={() => console.log('Configurações')}>Configurações</button>

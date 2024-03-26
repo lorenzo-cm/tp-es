@@ -5,8 +5,9 @@ import cookieParser from 'cookie-parser';
 import express from 'express';
 import cors from 'cors';
 
-import userRoutes from './routes/userRoutes.js';
-import cookiesRoutes from './routes/cookiesRoutes.js';
+import userRouter from './routers/userRouter.js';
+import sessionRouter from './routers/sessionRouter.js';
+
 
 const app = express();
 
@@ -29,8 +30,8 @@ app.use(function(req, res, next) {
 
 app.use(express.json());
 
-app.use('/api/cookies', cookiesRoutes)
-app.use('/api/users', userRoutes);
+app.use('/api/session', sessionRouter);
+app.use('/api/users', userRouter);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
