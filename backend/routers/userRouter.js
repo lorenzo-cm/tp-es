@@ -2,26 +2,29 @@ import express from 'express';
 import { v4 } from 'uuid';
 
 // Importing user and session management functions
-import { createUser, getUserByUsername_ } from '../db/userFunctions.js';
-import { createSession, authSessionMiddlewareRedirect } from '../session/sessionManager.js';
+import { createUser, getUserByUsername_, getUserById_ } from '../db/userFunctions.js';
+import { createSession, authSessionMiddlewareRedirect, authSessionMiddleware } from '../session/sessionManager.js';
 import { sendConfirmationEmail } from '../services/emailService.js';
 
 const router = express.Router();
 
-// Define the functions before using them
-const getUserByUsername = async (req, res) => {
+const getUserById = async (req, res) => {
+
     try {
-        const username = req.query.username;
-        console.log(username + ' db')
-        if (!username) {
-            return res.status(400).send('Username is required');
+        const userId = req.data.user_id
+
+        if (!userId) {
+            return res.status(400).send('UserId invalid');
         }
-        const user = await getUserByUsername_(username);
+
+        const user = await getUserById_(userId);
+        
         if (user) {
             res.json(user);
         } else {
             res.status(404).send('User not found');
         }
+
     } catch (error) {
         console.error('Error fetching user:', error);
         res.status(500).send('Internal server error');
@@ -70,7 +73,6 @@ const authenticateUser = async (req, res, next) => {
         }
 
         if (user.username === username && user.password === password) {
-            console.log("login success")
             req.user = user;
             next();
         } else {
@@ -84,7 +86,7 @@ const authenticateUser = async (req, res, next) => {
 };
 
 // Router setup
-router.get('/', authSessionMiddlewareRedirect, getUserByUsername);
+router.get('/', authSessionMiddleware, getUserById);
 router.post('/register', registerUser);
 router.post('/login', authSessionMiddlewareRedirect, authenticateUser, createSession);
 

@@ -1,5 +1,7 @@
 import axios from "axios";
 
+import { User } from "./model/user";
+
 export async function isLoggedIn() {
     try {
         const response = await fetch('http://localhost:3001/api/session/check', {
@@ -26,14 +28,18 @@ export async function isLoggedIn() {
     }
 }
 
-export async function getUser(username: string){
+export async function getUser(): Promise<User> {
+    try {
+        const response = await axios.get('http://localhost:3001/api/users/', { withCredentials: true, headers: { 'Content-Type': 'application/json' }});
+        console.log(response.data)
+        return response.data as User;
+
+    } 
     
-    axios.get(`/api/user?username=${encodeURIComponent(username)}`)
-    .then(response => {
-        console.log(response.data);
-    })
-    .catch(error => {
+    catch (error) {
         console.error('Error fetching user:', error);
-    });
+        throw error;
+    }
 
 }
+  

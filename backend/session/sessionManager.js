@@ -35,17 +35,16 @@ export const createSession = async (req, res) => {
 };
 
 
-function baseAuth(req, res) {
+async function baseAuth(req, res) {
 
     try {
         const sessionToken = req.cookies.session_id;
 
         if (!sessionToken) {
-            return res.status(401).send('Token not found');
+            return {status: 401, message: 'Token not found'}
         }
 
-        const userId = checkValidSession(sessionToken)
-        
+        const userId = await checkValidSession(sessionToken)
 
         if (!userId) {
             deleteInvalidSessions(sessionToken)
@@ -60,7 +59,8 @@ function baseAuth(req, res) {
             return {status: 401, message: 'Token expired'}
         }
         
-        return {data: {userId: userId} , status: 200, message: 'Token validated'}
+        // userIs a object alredy and the key from db is user_id
+        return {data: userId , status: 200, message: 'Token validated'}
     } 
     
     catch (error) {
@@ -70,7 +70,9 @@ function baseAuth(req, res) {
 
 export async function authSession(req, res) {
 
-    const responseJson = baseAuth(req, res);
+    console.log("authSession")
+
+    const responseJson = await baseAuth(req, res);
 
     if (responseJson.hasOwnProperty("data")) {
         req.data = responseJson.data
@@ -80,24 +82,26 @@ export async function authSession(req, res) {
 }
 
 
-export const authSessionMiddleware = async (req, res, next) => {
-    const responseJson = baseAuth(req, res);
+export async function authSessionMiddleware(req, res, next) {
+
+    console.log("authSessionMiddleware")
+
+    const responseJson = await baseAuth(req, res);
 
     if (responseJson.hasOwnProperty("data")) {
-        req.data = responseJson.data
+        req.data = responseJson.data;
+        next()
     }
 
     if (responseJson.status >= 400){
         res.status(responseJson.status).json({ message: responseJson.message})
     }
-
-    next()
 };
 
 
-export const authSessionMiddlewareRedirect = (req, res, next) => {
+export const authSessionMiddlewareRedirect = async (req, res, next) => {
 
-    const responseJson = baseAuth(req, res);
+    const responseJson = await baseAuth(req, res);
 
     if (responseJson.hasOwnProperty("data")) {
         req.data = responseJson.data
@@ -106,10 +110,6 @@ export const authSessionMiddlewareRedirect = (req, res, next) => {
     if (responseJson.status <= 400){
         console.log('redirecting user');
         return res.redirect('/profile');
-    }
-
-    if (responseJson.status >= 400){
-        res.status(responseJson.status).json({ message: responseJson.message})
     }
 
     next()
